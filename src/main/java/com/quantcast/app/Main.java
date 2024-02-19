@@ -69,6 +69,10 @@ public class Main {
             helper.printHelp("Command Option:", options);
             System.exit(0);
         }
+        catch (IOException ioException){
+            System.out.println(ioException.getMessage());
+            System.exit(0);
+        }
 
         if (checkDate && checkFile){
             searchFile(dateString, filename);
@@ -118,23 +122,16 @@ public class Main {
         return true;
     }
 
-    private static boolean isFileCSV(String filename){
-        boolean isCSVFile = false;
-        try {
+    private static boolean isFileCSV(String filename) throws IOException {
             File file = new File(filename);
             Path filePath = file.toPath();
             String contentType = probeContentType(filePath);
             if("text/csv".equals(contentType)){
-                isCSVFile = true;
+                return true;
             }
-        }
-        catch (Exception e) {
-            System.out.println("Invalid file format, it should be .csv file");
-            System.exit(0);
-        }
-        return isCSVFile;
+            else {
+                throw new IOException("Invalid file format, it should be .csv file");
+            }
     }
-
-
 
 }
