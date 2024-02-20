@@ -1,80 +1,92 @@
 # Most Active Cookie Checker (MACC)
 Installation and usage manual for the MACC console application.
 
+# Table of Contents
+1. [Installation](#installation)
+3. [Usage](#usage)
+4. [Development Notes](#development-notes)
+   5. [Assumptions](#assumptions)
+   6. [Improvements](#improvements)
+
 ## Installation
-EDM is a jvm console app which requires your computer to have a configured JRE (java runtime environment). This tutorial assumes you are running on a Windows machine.
+MACC is a jvm console app which requires your computer to have a configured JRE (java runtime environment). This tutorial assumes you are running on a Mac machine.
 
 #### Installing the JRE
 Running the application has two prerequisites: installing the JRE and configuring Windows environmental variables to know the path to the JRE.
 
-You can:
-1. (Method A) use a compressed zip which we extract (no install required)
-2. (Method B) use the exe which installs and attempts to set the path automatically. 
-
-
-##### Method A
-
-Step 1. Obtain a JDK (java development kit, which includes the JRE) from the official oracle jdks (Windows x64 Installer zip) https://www.oracle.com/java/technologies/javase-jdk16-downloads.html (at time of writing the newest one is jdk-16.0.1_windows-x64_bin )
-Step 2. Extract it somewhere on your PC. Preferably on your system drive (usually the C:\\ drive)
-Step 3. (requires admin access) Go to Start Menu > Edit the System Environment Variables
-Step 4. From the new window, select Environment Variables
-Step 5. (personal installation) under the section "User variables for [user name]" find the variable Path and select Edit
-Step 6. In the new window that has opened, create an entry by selecting New and writing the full path to bin folder of the jre. 
+Step 1. Obtain a JDK (java development kit, which includes the JRE) from the official oracle jdks  https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html (at time of writing the newest one is jdk-16.0.1_windows-x64_bin )
+Step 2. Check in browser downloads or finder to find the .dmg file and double click it.
+Step 3. This will display the installion screen. 
+Step 4. Continue following the steps on the screen and click Install.
+Step 5. This may ask for admin access, please enter the Administration username and password. A confirmation window will appear once installed
     
-        Examples:
+To confirm if it has been successfully installed you can check two ways:
 
-        if you've used the default install directory for the exe jre, it should be similar to C:\Program Files\Java\jdk-16.0.1\bin
-        if you use the .zip jdk, provide the full path to the extracted jdk's bin folder. If you've extracted it in the Documents folder, it should be similar to C:\Users\[user name]\Documents\jdk-16.0.1\bin
+1. The JDK is installed in /Library/Java/JavaVirtualMachine
+         Example : /Library/Java/JavaVirtualMachines/jdk-17.jdk/
 
-Step 7: Verify that the path is correct by opening a terminal (CMD or PowerShell from the start menu) and typing java -version. 
+2. Verify that the path is correct by opening a terminal and typing java -version. 
 A response such as this would indicate that the environment is configured correctly.
 
-java 16.0.1 2021-04-20
-Java(TM) SE Runtime Environment (build 16.0.1+9-24)
-Java HotSpot(TM) 64-Bit Server VM (build 16.0.1+9-24, mixed mode, sharing)
+java 17.0.10 2024-01-16 LTS
+Java(TM) SE Runtime Environment (build 17.0.10+11-LTS-240)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.10+11-LTS-240, mixed mode, sharing)
 
-If that is not successful, start from Method A Step 5, but instead of configuring the User variables, find the Path variable in the section "System Variables".
-
-
-##### Method B
-
-Step 1. Obtain jdk from the official oracle jdks (Windows x64 exe)
-Step 2. Install the exe (the default directory C:\Program Files\Java\jdk-16.0.1)
-Step 3. Restart your PC
-Step 4. Validate that the installation has successfully added the Path variable by doing the same thing as Method A Step 7. There is a chance automatically adding the path variable will be unsuccessful due to company policy restrictions on your machine. If that is the case, follow the manual process of adding the path variable from Method A Step 3.
-
+For more information on how to install a JDK: https://docs.oracle.com/en/java/javase/21/install/installation-jdk-macos.html#GUID-2FE451B0-9572-4E38-A1A5-568B77B146DE
 
 ## Usage
 
-Navigate to your terminal. If on windows, search for CMD or PowerShell in the start menu search.
-Once in the terminal window, navigate to 
+### Terminal
+
+Navigate to your terminal. Set the directory to the location of the .jar file
+
+Example if it's located on the desktop 
+`cd ~/desktop/dist`
+
+Then you can run the following command to check the most active cookie
+`java -jar target/most-active-cookie-1.0-SNAPSHOT-jar-with-dependencies.jar -f "logFiles/cookie_log.csv" -d 2018-12-09`
+
+Example output:
+````
+Most active cookies for 2018-12-09:
+AtY0laUfhglK3lC7
+````
+
+You can bring this manual up for a reminder while by executing the command without any of the arguments
+`java -jar target/most-active-cookie-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 ```
-Usage: 
-    --filename <f>   Attempt to scan a page to assess if there is an image before parsing it.
-                               Note: this speeds up the process but some diagrams might be missed.
-                               Default is off
-    --input <i>                Path to directory containing PDF documents to process.
-                               Examples:
-                               --input \path\to\input
-                               --input \path\to\input
-                               --input "\input with spaces in path\folder"
-                               --input .\relative\path
-    --output <o>               Path to directory where the results will be saved. Note: Each document parsed will create its own subfolder.
-                               Example (path syntax is identical to --input):
-                               --output= \path\to\output
-                               Default is same as input path
-    --multithreaded            (experimental) Enable processing pdfs in
-                               parallel. Might result in a speedup, but
-                               has limitations on Windows machines (might
-                               result in documents not being saved).
-    --extract-sections         Extract all sections from the pdf and export them as separate .txt files
+usage: Command Option:
+ -d,--dateString <d>   Date format YYYY-MM-DD
+ -f,--filename <f>     Path to CSV log file which contains:
+                       <cookies,timestamp>
+                       Example:
+                       -f /path/to/file
+                       -f "/path/to/file"
+                 
 ```
 
-You can bring this manual up for a reminder while by executing .\edm without any of the arguments
+You can bring this manual up for a reminder while by executing the command without any of the arguments
+`java -jar target/most-active-cookie-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
-Useful commands:
-1. csl -> clear terminal of logs
-2. dir -> list the current contents of the directory you are in (files and subdirectories)
-3. cd -> navigate to a directory. For full usage, please refer to the official documentation https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/cd
+Useful macOS commands:
+1. clear -> clear terminal of logs
+2. ls -> list the current contents of the directory you are in (files and subdirectories)
+3. cd -> navigate to a directory. For full usage, please refer to the official documentation
 4. typing the start of a command\directory and pressing [TAB] attempts to autocomplete your statement
+
+
+## Development Notes
+### Assumptions
+1. Date format only to be YYYY-MM-DD.
+2. Only accepts CSV files.
+3. Small file logs.
+4. The cookies are sorted in DESC order by date.
+5. CLI validation on date and file format.
+
+### Improvements
+1. The code currently is only suitable for smaller log files, so if it had a log file with 100+ cookies. It would either crash or be slow. Instead of reading every line it can stop after it reaches its desired date (if assumption 4 is still valid). 
+2. Add more assertions to the unhappy path test. Issue while development was to check the error messages as it would perform `System.exit`.
+3. To the readme add how to run from different OS like Windows.
+4. Allow different date formats in the command line.
+5. Instead of using the jar file, create an exe file instead. (Fix the pom.xml file)

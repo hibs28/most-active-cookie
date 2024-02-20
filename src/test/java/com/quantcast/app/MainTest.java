@@ -9,8 +9,9 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class MainTest {
     @Rule
@@ -20,6 +21,7 @@ public class MainTest {
     @Rule
     public final SystemOutRule systemOut = new SystemOutRule().enableLog().mute();
 
+    //Happy path test
     @Test
     public void testBuilder() {
         final CommandLine.Builder builder = new CommandLine.Builder();
@@ -30,33 +32,6 @@ public class MainTest {
         assertEquals("foo", cmd.getArgs()[0]);
         assertEquals("bar", cmd.getArgList().get(1));
         assertEquals("T", cmd.getOptions()[0].getOpt());
-    }
-
-    @Ignore
-    @Test
-    public void whenInvalidOption_returnErrorMessage() {
-        String[] args = new String[2];
-
-        args[0] = "-x";
-        args[1] = "-y";
-
-        exit.checkAssertionAfterwards(() -> assertNotEquals("", systemOut.getLog()));
-        Main.main(args);
-    }
-
-    @Ignore
-    @Test
-    public void invalidDateFormat_returnMessage() throws Exception {
-        String[] args = new String[4];
-
-        args[0] = "-f";
-        args[1] = "";
-        args[2] = "-d";
-        args[3] = "01-22-2023";
-
-        exit.checkAssertionAfterwards(() -> assertNotEquals("Invalid date format, it should be YYYY-MM-DD\n", systemOut.getLog()));
-
-        Main.main(args);
     }
 
     @Test
@@ -92,9 +67,34 @@ public class MainTest {
                 systemOut.getLog());
     }
 
-    @Ignore
+    //Unhappy path tests
     @Test
-    public void checkInvalidFile() {
+    public void whenInvalidOption_returnErrorMessage() {
+        String[] args = new String[2];
+
+        args[0] = "-x";
+        args[1] = "-y";
+
+        exit.expectSystemExitWithStatus(0);
+        Main.main(args);
+
+    }
+
+    @Test
+    public void invalidDateFormat_returnMessage() {
+        String[] args = new String[4];
+
+        args[0] = "-f";
+        args[1] = "";
+        args[2] = "-d";
+        args[3] = "01-22-2023";
+
+        exit.expectSystemExitWithStatus(3);
+        Main.main(args);
+    }
+
+    @Test
+    public void checkInvalidFileFormat() {
         String[] args = new String[4];
 
         args[0] = "-f";
@@ -102,12 +102,24 @@ public class MainTest {
         args[2] = "-d";
         args[3] = "2018-12-09";
 
+        exit.expectSystemExitWithStatus(3);
         Main.main(args);
+    }
 
-        assertEquals("Most active cookies for 2018-12-09:\n" +
-                        "AtY0laUfhglK3lC7\n" +
-                        "5UAVanZf6UtGyKVS\n",
-                systemOut.getLog());
+    @Ignore
+    @Test
+    public void checkInvalidFile() throws IOException {
+        String[] args = new String[4];
+
+        //mock bufferReader and throw IOException
+
+        args[0] = "-f";
+        args[1] = "src/test/resources/invalidFile.csv";
+        args[2] = "-d";
+        args[3] = "2018-12-09";
+
+        exit.expectSystemExitWithStatus(1);
+        Main.main(args);
     }
 
 }

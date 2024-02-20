@@ -24,12 +24,10 @@ public class Main {
                 .argName("f")
                 .hasArg()
                 .required(true)
-                .desc("Path to directory containing PDF documents to process.\\n\" +\n" +
-                        "                                    \"Examples: \\n\" +\n" +
-                        "                                    \"-f /path/to/input\\n\" +\n" +
-                        "                                    \"-f /path/to/input\\n\" +\n" +
-                        "                                    \"-f \\\"/input with spaces in path/folder\\\"\\n\" +\n" +
-                        "                                    \"-f ./relative/path\"")
+                .desc("Path to CSV log file which contains: <cookies,timestamp>" + "\n" +
+                        "                       Example:\n" +
+                        "                         -f /path/to/file\n"+
+                        "                         -f \"/path/to/file\"")
                 .build();
 
         Option dateOption = Option.builder("d").longOpt("dateString")
@@ -67,12 +65,11 @@ public class Main {
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             helper.printHelp("Command Option:", options);
-            System.exit(0);
+            terminateWithExitCode(0);
         }
         catch (IOException ioException){
             System.out.println(ioException.getMessage());
-            System.exit(0);
-        }
+            terminateWithExitCode(3);        }
 
         if (checkDate && checkFile){
             searchFile(dateString, filename);
@@ -100,6 +97,7 @@ public class Main {
             }
         } catch (IOException e) {
             System.err.println("Error reading file: " + e.getMessage());
+            terminateWithExitCode(1);
             return;
         }
 
@@ -112,12 +110,16 @@ public class Main {
                 .forEach(entry -> System.out.println(entry.getKey()));
     }
 
+    private static void terminateWithExitCode(int exitCode) {
+        System.exit(exitCode);
+    }
+
     private static boolean isValidDate(String dateString) {
         try {
             LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format, it should be YYYY-MM-DD");
-            System.exit(0);
+            terminateWithExitCode(2);
         }
         return true;
     }
