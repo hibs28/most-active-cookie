@@ -3,10 +3,10 @@ Installation and usage manual for the MACC console application.
 
 # Table of Contents
 1. [Installation](#installation)
-3. [Usage](#usage)
-4. [Development Notes](#development-notes)
-   5. [Assumptions](#assumptions)
-   6. [Improvements](#improvements)
+2. [Usage](#usage)
+3. [Development Notes](#development-notes)
+   1. [Assumptions](#assumptions)
+   2. [Improvements](#improvements)
 
 ## Installation
 MACC is a jvm console app which requires your computer to have a configured JRE (java runtime environment). This tutorial assumes you are running on a Mac machine.
@@ -44,6 +44,7 @@ Example if it's located on the desktop
 `cd ~/desktop/dist`
 
 Then you can run the following command to check the most active cookie
+
 `java -jar target/most-active-cookie-1.0-SNAPSHOT-jar-with-dependencies.jar -f "logFiles/cookie_log.csv" -d 2018-12-09`
 
 Example output:
@@ -53,6 +54,7 @@ AtY0laUfhglK3lC7
 ````
 
 You can bring this manual up for a reminder while by executing the command without any of the arguments
+
 `java -jar target/most-active-cookie-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 ```
